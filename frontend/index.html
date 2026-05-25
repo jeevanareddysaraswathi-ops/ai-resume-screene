@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecruitAI — AI Resume Screener</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07080F;font-family:'Segoe UI',sans-serif;color:#EDE8F5;padding:24px;min-height:100vh;position:relative;overflow-x:hidden}
+.orb1{position:fixed;width:300px;height:300px;border-radius:50%;background:rgba(139,92,246,0.13);top:-60px;right:-60px;filter:blur(90px);pointer-events:none}
+.orb2{position:fixed;width:280px;height:280px;border-radius:50%;background:rgba(244,114,182,0.1);bottom:180px;left:-90px;filter:blur(80px);pointer-events:none}
+.orb3{position:fixed;width:200px;height:200px;border-radius:50%;background:rgba(139,92,246,0.07);bottom:50px;right:20px;filter:blur(70px);pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;padding-bottom:16px;border-bottom:0.5px solid rgba(255,255,255,0.06)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-box{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(244,114,182,0.2));border:0.5px solid rgba(139,92,246,0.4);display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-name{font-size:15px;font-weight:500;color:#fff}
+.logo-tag{font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px}
+.pill{font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(244,114,182,0.1);border:0.5px solid rgba(244,114,182,0.25);color:#F9A8D4;display:flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;background:#4ADE80}
+.hero{margin-bottom:24px}
+.eyebrow{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;color:#A78BFA}
+h1{font-size:28px;font-weight:500;color:#fff;line-height:1.35;margin-bottom:8px}
+h1 .v{color:#C4B5FD}
+h1 .r{color:#F9A8D4}
+.hero p{font-size:13px;color:rgba(255,255,255,0.38);line-height:1.7}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.metric{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;text-align:center;backdrop-filter:blur(12px)}
+.mval{font-size:22px;font-weight:500;color:#A78BFA}
+.mlbl{font-size:11px;color:rgba(255,255,255,0.3);margin-top:3px}
+.glass{background:rgba(255,255,255,0.035);border:0.5px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px;margin-bottom:14px;backdrop-filter:blur(20px)}
+.chead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.cicon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ctitle{font-size:14px;font-weight:500;color:#fff}
+.csub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px}
+.abar{width:28px;height:2px;border-radius:2px;margin-bottom:12px;background:linear-gradient(90deg,#8B5CF6,#F472B6)}
+textarea{width:100%;height:130px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.07);border-radius:10px;color:#EDE8F5;padding:12px;font-size:13px;resize:none;outline:none;font-family:inherit;line-height:1.6}
+textarea:focus{border-color:rgba(139,92,246,0.35)}
+textarea::placeholder{color:rgba(255,255,255,0.22)}
+.drop{border:1px dashed rgba(139,92,246,0.25);border-radius:10px;padding:24px;text-align:center;background:rgba(139,92,246,0.03);cursor:pointer;transition:all 0.2s}
+.drop:hover{border-color:rgba(139,92,246,0.4);background:rgba(139,92,246,0.06)}
+.drop-icon{font-size:28px;margin-bottom:8px}
+.drop p{font-size:13px;color:rgba(255,255,255,0.38)}
+.drop span{font-size:11px;color:#C4B5FD;margin-top:4px;display:block}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(244,114,182,0.08);border:0.5px solid rgba(244,114,182,0.2);color:#F9A8D4;display:flex;align-items:center;gap:4px}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;color:#fff;background:linear-gradient(135deg,#7C3AED,#DB2777);letter-spacing:0.2px;margin-top:4px;transition:opacity 0.2s}
+.btn:hover{opacity:0.9}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.shead{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}
+.stitle{font-size:14px;font-weight:500;color:#fff}
+.ssub{font-size:11px;color:rgba(255,255,255,0.3)}
+.rcard{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(12px);transition:transform 0.2s}
+.rcard:hover{transform:translateX(4px)}
+.rcard.top{border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.07)}
+.rnum{font-size:18px;font-weight:500;min-width:34px;text-align:center}
+.r1{color:#C4B5FD}
+.r2{color:rgba(255,255,255,0.45)}
+.r3{color:#F9A8D4}
+.rx{color:rgba(255,255,255,0.2)}
+.rname{font-size:14px;font-weight:500;color:#fff;margin-bottom:3px}
+.rmeta{font-size:11px;color:rgba(255,255,255,0.32)}
+.rtags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rtag{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(139,92,246,0.1);border:0.5px solid rgba(139,92,246,0.18);color:#C4B5FD}
+.sring{width:54px;height:54px;border-radius:50%;border:1.5px solid rgba(139,92,246,0.35);background:rgba(139,92,246,0.08);display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0}
+.sv{font-size:12px;font-weight:500;color:#C4B5FD}
+.sl{font-size:9px;color:rgba(255,255,255,0.28)}
+.loading{text-align:center;padding:30px;display:none}
+.spinner{width:36px;height:36px;border:2px solid rgba(139,92,246,0.2);border-top-color:#8B5CF6;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-size:13px;color:rgba(255,255,255,0.38)}
+.status{text-align:center;padding:8px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none}
+.s-ok{background:rgba(139,92,246,0.15);color:#C4B5FD;border:0.5px solid rgba(139,92,246,0.3)}
+.s-err{background:rgba(244,114,182,0.12);color:#F9A8D4;border:0.5px solid rgba(244,114,182,0.25)}
+#results{display:none}
+</style>
+</head>
+<body>
+<div class="orb1"></div>
+<div class="orb2"></div>
+<div class="orb3"></div>
+<div class="wrap">
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-box">🤖</div>
+    <div>
+      <div class="logo-name">RecruitAI</div>
+      <div class="logo-tag">Intelligent screening</div>
+    </div>
+  </div>
+  <div class="pill"><div class="dot"></div>API live</div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">AI Resume Screener</div>
+  <h1>Find your <span class="v">perfect</span> <span class="r">candidate</span><br>with AI precision</h1>
+  <p>NLP · TF-IDF · Cosine Similarity — rank candidates by skill relevance in seconds.</p>
+</div>
+
+<div class="metrics">
+  <div class="metric"><div class="mval" id="mCount">0</div><div class="mlbl">Resumes</div></div>
+  <div class="metric"><div class="mval">33</div><div class="mlbl">Skills tracked</div></div>
+  <div class="metric"><div class="mval">0.2s</div><div class="mlbl">Avg rank time</div></div>
+</div>
+
+<div class="glass">
+  <div class="chead">
+    <div class="cicon" style="background:rgba(139,92,246,0.12)">📋</div>
+    <div><div class="ctitle">Job description</div><div class="csub">Describe the role and required skills</div></div>
+  </div>
+  <div class="abar"></div>
+  <textarea id="jobDesc" placeholder="e.g. We need a Python developer with Machine Learning, NLP, Deep Learning, TensorFlow and Scikit-learn experience..."></textarea>
+</div>
+
+<div class="glass">
+  <div class="chead">
+    <div class="cicon" style="background:rgba(244,114,182,0.1)">📁</div>
+    <div><div class="ctitle">Upload resumes</div><div class="csub">PDF or DOCX · multiple files</div></div>
+  </div>
+  <div class="abar"></div>
+  <div class="drop" onclick="document.getElementById('fileInput').click()">
+    <input type="file" id="fileInput" multiple accept=".pdf,.docx" style="display:none" onchange="handleFiles(this.files)">
+    <div class="drop-icon">📄</div>
+    <p>Click to upload resume files</p>
+    <span>Supports PDF and DOCX · multiple files</span>
+  </div>
+  <div class="chips" id="fileList"></div>
+</div>
+
+<div class="status" id="statusMsg"></div>
+
+<button class="btn" id="rankBtn" onclick="rankCandidates()">✨ Analyse and rank candidates</button>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <p>AI is analysing resumes...</p>
+</div>
+
+<div id="results">
+  <div class="shead">
+    <div class="stitle">Candidate rankings</div>
+    <div class="ssub">sorted by match score</div>
+  </div>
+  <div id="rankList"></div>
+</div>
+
+</div>
+
+<script>
+let uploadedFiles = [];
+
+function handleFiles(files) {
+  uploadedFiles = Array.from(files);
+  const list = document.getElementById('fileList');
+  list.innerHTML = '';
+  uploadedFiles.forEach(f => {
+    list.innerHTML += `<div class="chip">📄 ${f.name}</div>`;
+  });
+  document.getElementById('mCount').textContent = uploadedFiles.length;
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = `status ${type === 'ok' ? 's-ok' : 's-err'}`;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+async function rankCandidates() {
+  const jobDesc = document.getElementById('jobDesc').value.trim();
+  if (!jobDesc) { showStatus('Please enter a job description!', 'err'); return; }
+
+  const btn = document.getElementById('rankBtn');
+  btn.disabled = true;
+
+  if (uploadedFiles.length > 0) {
+    showStatus('Uploading resumes...', 'ok');
+    for (let file of uploadedFiles) {
+      const fd = new FormData();
+      fd.append('file', file);
+      await fetch('http://127.0.0.1:8000/upload-resume', { method: 'POST', body: fd });
+    }
+  }
+
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+
+  const fd = new FormData();
+  fd.append('job_description', jobDesc);
+  const res = await fetch('http://127.0.0.1:8000/rank-candidates', { method: 'POST', body: fd });
+  const data = await res.json();
+
+  document.getElementById('loading').style.display = 'none';
+  btn.disabled = false;
+
+  const rankList = document.getElementById('rankList');
+  rankList.innerHTML = '';
+  const medals = ['r1', 'r2', 'r3'];
+  const tops = ['top', '', ''];
+
+  data.candidates.forEach((c, i) => {
+    const tags = c.matched_skills.map(s => `<span class="rtag">${s}</span>`).join('');
+    rankList.innerHTML += `
+      <div class="rcard ${tops[i] || ''}">
+        <div class="rnum ${medals[i] || 'rx'}">#${i+1}</div>
+        <div style="flex:1">
+          <div class="rname">${c.candidate}</div>
+          <div class="rmeta">${c.matched_skills.length} skills matched</div>
+          <div class="rtags">${tags || '<span style="color:rgba(255,255,255,0.2);font-size:11px">No matching skills</span>'}</div>
+        </div>
+        <div class="sring"><div class="sv">${c.score}%</div><div class="sl">match</div></div>
+      </div>`;
+  });
+
+  document.getElementById('results').style.display = 'block';
+  showStatus('Ranking complete! ✨', 'ok');
+}
+</script>
+</body>
+</html>
